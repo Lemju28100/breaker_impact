@@ -15,6 +15,7 @@ class Player(Widget):
         self.size_hint_x = .2
         self.size_hint_y = .05
         self.ball = ball
+        self.speedup = 1.01
 
 
 
@@ -73,28 +74,31 @@ class Player(Widget):
     def bounce_ball(self):
         if self.collide_widget(self.ball):
             vx, vy = self.ball.velocity
-            speedup = 1.01
+
+            
             offset = (self.ball.center_y - self.center_y)/ (self.height/2)
 
             if tuple(self.ball.pos) >= (self.x - self.ball.center_x, self.y+self.height) and tuple(self.ball.pos) < (self.x + self.width/4, self.y+self.height):
                 print('Hit left', self.ball.velocity)
 
-                bounced = Vector(vx, vy).rotate(random.choice(range(230, 240)))
+                bounced = Vector(-1 * vx if vx > 0 else vx, -1 * vy if vy < 0 else vy)
 
             elif tuple(self.ball.pos) >= (self.x + self.width/4, self.y+self.height) and tuple(self.ball.pos) < (self.x + self.width * 3/4, self.y+self.height):
                 print('Hit Middle', self.ball.velocity)
-                bounced = Vector(vx, vy).rotate(random.choice(range(260, 280)))
+                bounced = Vector(vx, -1 * vy)
 
             elif tuple(self.ball.pos) >= (self.x + self.width * 3/4, self.y+self.height) and tuple(self.ball.pos) <= (self.x + self.width + self.ball.center_x, self.y+self.height):
                 print('Hit right', self.ball.velocity)
-                bounced = Vector(vx, vy).rotate(random.choice(range(286, 335)))
+                bounced = Vector(-1 * vx if vx < 0 else vx, -1 * vy if vy < 0 else vy)
 
             else:
                 bounced = Vector(vx, -1 * vy)
 
 
-            vel = bounced * speedup
+            vel = bounced * self.speedup
             self.ball.velocity = vel.x, vel.y
+            self.speedup+= 0.001
+            print(self.speedup)
             
 
     
